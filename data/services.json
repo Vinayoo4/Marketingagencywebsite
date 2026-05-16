@@ -1,0 +1,89 @@
+{
+  "services": [
+    {
+      "id": "svc-ecom-ops",
+      "name": "E-commerce Launch & Operations",
+      "slug": "ecommerce-launch-operations",
+      "category": "ecommerce_ops",
+      "short_description": "Marketplace setup, listings, and backend operations for product businesses.",
+      "detailed_description": "Launch and optimize Flipkart/Meesho and marketplace operations with catalog hygiene, pricing logic, and process discipline.",
+      "ideal_client": "For product-based businesses selling on marketplaces.",
+      "starting_price_inr": 15000,
+      "delivery_timeframe": "2 to 4 weeks",
+      "highlights": [
+        "Flipkart and Meesho seller setup and optimization",
+        "Catalog, listing, and pricing strategy",
+        "Order and fulfillment operations playbooks"
+      ],
+      "is_featured": true
+    },
+    {
+      "id": "svc-growth-marketing",
+      "name": "Performance Marketing & Content",
+      "slug": "performance-marketing-content",
+      "category": "marketing",
+      "short_description": "Lead generation campaigns and content systems designed for conversion.",
+      "detailed_description": "Build a practical growth engine with ad campaigns, landing pages, and short-form content tailored to your audience.",
+      "ideal_client": "For D2C brands and local businesses ready to scale leads.",
+      "starting_price_inr": 18000,
+      "delivery_timeframe": "Monthly retainer",
+      "highlights": [
+        "Campaign planning and optimization",
+        "Short-form content for Instagram and YouTube",
+        "Landing pages and lead funnels"
+      ],
+      "is_featured": true
+    },
+    {
+      "id": "svc-brand-packaging",
+      "name": "Brand & Packaging Systems",
+      "slug": "brand-packaging-systems",
+      "category": "branding",
+      "short_description": "Brand identity, packaging readiness, and conversion-first product presentation.",
+      "detailed_description": "Define naming, story, and design direction while ensuring packaging and product documents are practical and marketplace-ready.",
+      "ideal_client": "For founders launching new products or repositioning existing brands.",
+      "starting_price_inr": 22000,
+      "delivery_timeframe": "3 to 6 weeks",
+      "highlights": [
+        "Brand story and visual guidelines",
+        "Packaging design support for shipping and compliance",
+        "Conversion-focused product listing documentation"
+      ],
+      "is_featured": false
+    },
+    {
+      "id": "svc-compliance",
+      "name": "GST & FSSAI Compliance Support",
+      "slug": "gst-fssai-compliance-support",
+      "category": "compliance",
+      "short_description": "Documentation and compliance support so businesses can sell confidently.",
+      "detailed_description": "Organize compliance workflows across GST, HSN logic, Udyam, and FSSAI support to reduce operational bottlenecks.",
+      "ideal_client": "For retailers and food/product businesses needing compliant e-commerce operations.",
+      "starting_price_inr": 12000,
+      "delivery_timeframe": "1 to 3 weeks",
+      "highlights": [
+        "GST, HSN and Udyam guidance",
+        "FSSAI process support",
+        "Compliance checklist and documentation flow"
+      ],
+      "is_featured": false
+    },
+    {
+      "id": "svc-ai-automation",
+      "name": "AI & Automation for Small Businesses",
+      "slug": "ai-automation-small-business",
+      "category": "ai_automation",
+      "short_description": "Simple internal automations and dashboards to save time and improve visibility.",
+      "detailed_description": "Design practical automations and reporting views for sales, operations, and content workflows.",
+      "ideal_client": "For SMB teams that need lean systems instead of enterprise complexity.",
+      "starting_price_inr": 25000,
+      "delivery_timeframe": "2 to 5 weeks",
+      "highlights": [
+        "Workflow automations for repetitive tasks",
+        "Educational content and worksheet systems",
+        "Sales and performance dashboard setup"
+      ],
+      "is_featured": true
+    }
+  ]
+}

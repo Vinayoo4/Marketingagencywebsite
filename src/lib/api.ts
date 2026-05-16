@@ -1,146 +1,105 @@
-/**
- * Centralized API client for Shree Nandi Marketing Services
- * Routes all backend calls through VITE_API_BASE
- */
+const API_BASE = (import.meta.env.VITE_API_BASE || '').replace(/\/$/, '');
 
-const API_BASE = import.meta.env.VITE_API_BASE as string | undefined;
-
-function getHeaders(): HeadersInit {
-  const headers: HeadersInit = { 'Content-Type': 'application/json' };
-  const token = localStorage.getItem('snms_admin_token');
-  if (token) headers['Authorization'] = `Bearer ${token}`;
-  return headers;
+function buildUrl(path: string): string {
+  return API_BASE ? `${API_BASE}${path}` : path;
 }
 
-async function request<T>(
-  method: string,
-  path: string,
-  body?: unknown,
-  signal?: AbortSignal
-): Promise<T> {
-  if (!API_BASE) {
-    throw new Error('API_BASE not configured');
-  }
-  const res = await fetch(`${API_BASE}${path}`, {
+function getHeaders(): HeadersInit {
+  const token = localStorage.getItem('snma_admin_token');
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+}
+
+async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
+  const res = await fetch(buildUrl(path), {
     method,
     headers: getHeaders(),
     body: body !== undefined ? JSON.stringify(body) : undefined,
-    signal,
   });
+
   if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: res.statusText })) as { error?: string };
-    throw new Error(err.error || `HTTP ${res.status}`);
+    const errorBody = (await res.json().catch(() => ({ error: 'Request failed' }))) as { error?: string };
+    throw new Error(errorBody.error || `Request failed (${res.status})`);
   }
-  if (res.status === 204) return undefined as unknown as T;
+
+  if (res.status === 204) {
+    return undefined as T;
+  }
+
   return res.json() as Promise<T>;
 }
 
-const get = <T>(path: string, signal?: AbortSignal) => request<T>('GET', path, undefined, signal);
-const post = <T>(path: string, body: unknown) => request<T>('POST', path, body);
-const put = <T>(path: string, body: unknown) => request<T>('PUT', path, body);
-const del = (path: string) => request<void>('DELETE', path);
-
-// ── API methods ───────────────────────────────────────────────────────────────
-
-export interface Product {
+export interface Service {
   id: string;
-  slug: string;
   name: string;
-  description: string;
-  price: number;
-  features: string[];
-  badge?: string;
-  isActive: boolean;
+  slug: string;
+  category: 'ecommerce_ops' | 'marketing' | 'branding' | 'ai_automation' | 'compliance';
+  short_description: string;
+  detailed_description: string;
+  ideal_client: string;
+  starting_price_inr: number;
+  delivery_timeframe: string;
+  highlights: string[];
+  is_featured: boolean;
 }
 
-export interface Order {
+export interface Testimonial {
   id: string;
-  orderId: string;
-  customerName: string;
-  customerEmail: string;
-  customerPhone?: string;
-  company?: string;
-  amount: number;
-  status: string;
-  createdAt: string;
+  client_name: string;
+  company: string;
+  project_type: string;
+  quote: string;
+  result_summary: string;
+  metrics: {
+    leads_increase_percent: number | null;
+    revenue_increase_percent: number | null;
+  };
+  featured: boolean;
 }
 
-export interface VisitorStats {
-  total: number;
-  daily: number;
-  date: string;
-}
-
-export interface AdminStats {
-  visitors: VisitorStats;
-  orders: number;
-  revenue: number;
-  products: number;
-}
-
-export interface ContactPayload {
+export interface Inquiry {
+  id: string;
   name: string;
   email: string;
+  phone: string;
+  business_name: string;
+  business_stage: 'idea' | 'early' | 'growing' | 'established';
+  services_interested: string[];
+  message: string;
+  status: 'new' | 'in_progress' | 'closed';
+  admin_notes: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface InquiryPayload {
+  name: string;
+  email: string;
+  phone: string;
+  business_name: string;
+  business_stage: 'idea' | 'early' | 'growing' | 'established';
+  services_interested: string[];
   message: string;
 }
 
 export interface AdminLoginResponse {
   token: string;
-  user: { id: string; email: string; role: string; name?: string };
+  user: {
+    id: string;
+    username: string;
+  };
 }
 
-export const isApiConfigured = Boolean(API_BASE);
-
 export const api = {
-  // Health
-  health: () => get<{ status: string }>('/health'),
-
-  // Visitor
-  registerVisit: (path: string) =>
-    post<void>('/api/visit', { path }).catch(() => undefined),
-
-  // Contact
-  contact: (payload: ContactPayload) =>
-    post<{ success: boolean; message: string }>('/api/contact', payload),
-
-  // Products
-  getProducts: (signal?: AbortSignal) => get<Product[]>('/api/products', signal),
-  getProduct: (slug: string) => get<Product>(`/api/products/${slug}`),
-
-  // Certifications
-  getCertifications: (signal?: AbortSignal) =>
-    get<{ id: string; slug: string; title: string; issuer: string; year: number; description: string; url?: string; icon?: string; color?: string }[]>(
-      '/api/certifications',
-      signal
-    ),
-
-  // Orders
-  createOrder: (payload: {
-    orderId: string;
-    customer: { name: string; email: string; phone?: string; company?: string; gst?: string };
-    cart: { id: string; name: string; price: number; qty: number }[];
-    total: number;
-  }) => post<{ id: string; orderId: string }>('/api/orders', payload),
-
-  // NPS
-  submitNps: (payload: { orderId: string; score: number; comment?: string }) =>
-    post<{ success: boolean }>('/api/nps', payload),
-
-  // Admin auth
-  adminLogin: (email: string, password: string) =>
-    post<AdminLoginResponse>('/api/admin/login', { email, password }),
-
-  // Admin data
-  adminStats: (signal?: AbortSignal) => get<AdminStats>('/api/admin/stats', signal),
-  adminOrders: (signal?: AbortSignal) =>
-    get<{ orders: Order[]; total: number; page: number; pages: number }>('/api/admin/orders', signal)
-      .then((res) => res.orders),
-  adminProducts: (signal?: AbortSignal) => get<Product[]>('/api/admin/products', signal),
-  adminCreateProduct: (data: Omit<Product, 'id' | 'isActive'>) =>
-    post<Product>('/api/admin/products', data),
-  adminUpdateProduct: (id: string, data: Partial<Product>) =>
-    put<Product>(`/api/admin/products/${id}`, data),
-  adminDeleteProduct: (id: string) => del(`/api/admin/products/${id}`),
+  health: () => request<{ status: string }>('GET', '/health'),
+  getServices: () => request<Service[]>('GET', '/api/services'),
+  getTestimonials: () => request<Testimonial[]>('GET', '/api/testimonials'),
+  createInquiry: (payload: InquiryPayload) => request<{ success: boolean; inquiry: Inquiry }>('POST', '/api/inquiries', payload),
+  adminLogin: (username: string, password: string) =>
+    request<AdminLoginResponse>('POST', '/api/admin/login', { username, password }),
+  adminInquiries: () => request<Inquiry[]>('GET', '/api/inquiries'),
+  adminUpdateInquiry: (id: string, data: Partial<Pick<Inquiry, 'status' | 'admin_notes'>>) =>
+    request<{ success: boolean; inquiry: Inquiry }>('PATCH', `/api/inquiries/${id}`, data),
 };
-
-export default api;

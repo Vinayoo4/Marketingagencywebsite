@@ -5,12 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:backend": "npm run dev --prefix local-backend",
+    "dev:full": "npm run dev --prefix local-backend & npm run dev",
     "build": "vite build",
+    "build:backend": "npm run build --prefix local-backend",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.39.7",
     "animejs": "^3.2.2",
     "framer-motion": "^11.0.8",
     "leaflet": "^1.9.4",
