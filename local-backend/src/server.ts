@@ -1,6 +1,7 @@
-import { createHash, randomUUID } from 'node:crypto';
+import { randomUUID, scryptSync, timingSafeEqual } from 'node:crypto';
 import express, { type Request, type Response, type NextFunction } from 'express';
 import cors from 'cors';
+import rateLimit from 'express-rate-limit';
 import { readJsonFile, writeJsonFile } from './store.js';
 import type { AdminUser, Inquiry, Service, Testimonial } from './types.js';
 
@@ -11,13 +12,42 @@ const sessions = new Map<string, { userId: string; expiresAt: number }>();
 app.use(cors());
 app.use(express.json({ limit: '100kb' }));
 
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many login attempts. Try again later.' },
+});
+
+const adminLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 120,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests. Please wait and retry.' },
+});
+
 type InquiryStore = { inquiries: Inquiry[] };
 type ServicesStore = { services: Service[] };
 type TestimonialsStore = { testimonials: Testimonial[] };
 type AdminUsersStore = { admin_users: AdminUser[] };
 
-function toHash(value: string): string {
-  return createHash('sha256').update(value).digest('hex');
+function verifyPassword(password: string, storedHash: string): boolean {
+  const [salt, expectedHash] = storedHash.split(':');
+  if (!salt || !expectedHash) {
+    return false;
+  }
+
+  const calculated = scryptSync(password, salt, 64).toString('hex');
+  const calculatedBuf = Buffer.from(calculated, 'hex');
+  const expectedBuf = Buffer.from(expectedHash, 'hex');
+
+  if (calculatedBuf.length !== expectedBuf.length) {
+    return false;
+  }
+
+  return timingSafeEqual(calculatedBuf, expectedBuf);
 }
 
 function requireAdmin(req: Request, res: Response, next: NextFunction) {
@@ -89,7 +119,7 @@ app.post('/api/inquiries', async (req, res) => {
   res.status(201).json({ success: true, inquiry });
 });
 
-app.post('/api/admin/login', async (req, res) => {
+app.post('/api/admin/login', loginLimiter, async (req, res) => {
   const { username, password } = req.body as { username?: string; password?: string };
   if (!username || !password) {
     return res.status(400).json({ error: 'username and password are required' });
@@ -98,7 +128,7 @@ app.post('/api/admin/login', async (req, res) => {
   const db = await readJsonFile<AdminUsersStore>('admin_users.json');
   const user = db.admin_users.find((u) => u.username === username);
 
-  if (!user || user.password_hash !== toHash(password)) {
+  if (!user || !verifyPassword(password, user.password_hash)) {
     return res.status(401).json({ error: 'Invalid credentials' });
   }
 
@@ -114,12 +144,12 @@ app.post('/api/admin/login', async (req, res) => {
   });
 });
 
-app.get('/api/inquiries', requireAdmin, async (_req, res) => {
+app.get('/api/inquiries', requireAdmin, adminLimiter, async (_req, res) => {
   const db = await readJsonFile<InquiryStore>('inquiries.json');
   res.json(db.inquiries);
 });
 
-app.patch('/api/inquiries/:id', requireAdmin, async (req, res) => {
+app.patch('/api/inquiries/:id', requireAdmin, adminLimiter, async (req, res) => {
   const { id } = req.params;
   const { status, admin_notes } = req.body as { status?: Inquiry['status']; admin_notes?: string };
 
