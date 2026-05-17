@@ -1,51 +1,14 @@
 version: '3.9'
 
 services:
-  postgres:
-    image: postgres:16-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-snms}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-snms_secret}
-      POSTGRES_DB: ${POSTGRES_DB:-shiva_marketing}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - '5432:5432'
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-snms}']
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  backend:
+  local-backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: ./local-backend
     restart: unless-stopped
     environment:
-      NODE_ENV: production
       PORT: 3001
-      DATABASE_URL: postgresql://${POSTGRES_USER:-snms}:${POSTGRES_PASSWORD:-snms_secret}@postgres:5432/${POSTGRES_DB:-shiva_marketing}
-      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
-      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
-      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
-      EMAILJS_SERVICE_ID: ${EMAILJS_SERVICE_ID:-}
-      EMAILJS_TEMPLATE_ID: ${EMAILJS_TEMPLATE_ID:-}
-      EMAILJS_USER_ID: ${EMAILJS_USER_ID:-}
-      AI_API_KEY: ${AI_API_KEY:-}
-      AI_API_BASE: ${AI_API_BASE:-https://api.openai.com/v1}
-      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
     ports:
       - '3001:3001'
-    depends_on:
-      postgres:
-        condition: service_healthy
-    healthcheck:
-      test: ['CMD-SHELL', 'curl -f http://localhost:3001/health || exit 1']
-      interval: 30s
-      timeout: 10s
-      retries: 3
 
   frontend:
     build:
@@ -54,12 +17,8 @@ services:
     restart: unless-stopped
     environment:
       VITE_API_BASE: http://localhost:3001
-      VITE_SUPABASE_URL: ${VITE_SUPABASE_URL:-}
-      VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY:-}
+      VITE_ENABLE_ADMIN: 'true'
     ports:
       - '5173:80'
     depends_on:
-      - backend
-
-volumes:
-  postgres_data:
+      - local-backend

@@ -1,291 +1,118 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import L from 'leaflet';
-import { Mail, Phone, MapPin, Clock, MessageCircleMore } from 'lucide-react';
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-import { isSupabaseConfigured, supabase } from '../lib/supabase';
-import { api, isApiConfigured } from '../lib/api';
-import 'leaflet/dist/leaflet.css';
+import { useEffect, useMemo, useState } from 'react';
+import { api, type InquiryPayload, type Service } from '../lib/api';
 
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: markerIcon2x,
-  iconUrl: markerIcon,
-  shadowUrl: markerShadow,
-});
-
-// Rewari, Haryana, India
-const LOCATION: [number, number] = [28.1970, 76.6167];
+const initialForm: InquiryPayload = {
+  name: '',
+  email: '',
+  phone: '',
+  business_name: '',
+  business_stage: 'idea',
+  services_interested: [],
+  message: '',
+};
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: ''
-  });
-  const [status, setStatus] = useState<
-    'idle' | 'loading' | 'success' | 'error' | 'unavailable'
-  >('idle');
+  const [form, setForm] = useState<InquiryPayload>(initialForm);
+  const [services, setServices] = useState<Service[]>([]);
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus('loading');
+  useEffect(() => {
+    void api.getServices().then(setServices).catch(() => undefined);
+  }, []);
 
-    // Try backend API first
-    if (isApiConfigured) {
-      try {
-        await api.contact(formData);
-        setStatus('success');
-        setFormData({ name: '', email: '', message: '' });
-        return;
-      } catch (err) {
-        console.warn('Backend contact failed, trying Supabase:', err);
-      }
-    }
+  const serviceOptions = useMemo(() => services.map((service) => service.name), [services]);
 
-    // Fall back to Supabase
-    if (supabase && isSupabaseConfigured) {
-      try {
-        const { error } = await supabase.from('inquiries').insert([formData]);
-        if (error) throw error;
-        setStatus('success');
-        setFormData({ name: '', email: '', message: '' });
-        return;
-      } catch (error) {
-        console.error('Error submitting form:', error);
-        setStatus('error');
-        return;
-      }
-    }
-
-    // Neither available
-    setStatus('unavailable');
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData(prev => ({
+  const toggleService = (name: string) => {
+    setForm((prev) => ({
       ...prev,
-      [e.target.id]: e.target.value
+      services_interested: prev.services_interested.includes(name)
+        ? prev.services_interested.filter((item) => item !== name)
+        : [...prev.services_interested, name],
     }));
   };
 
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setStatus('loading');
+
+    try {
+      await api.createInquiry(form);
+      setStatus('success');
+      setForm(initialForm);
+    } catch {
+      setStatus('error');
+    }
+  };
+
   return (
-    <div>
-      {/* Hero */}
-      <section className="relative py-20 sacred-bg overflow-hidden">
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-5 select-none" aria-hidden="true">
-          <span className="text-[20rem] text-cyan-400">ॐ</span>
-        </div>
-        <div className="container relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <div className="text-sm font-medium tracking-[0.3em] uppercase text-cyan-400 mb-4">
-              ॐ नमः शिवाय &nbsp;·&nbsp; Connect With Us
-            </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              Begin Your <span className="text-cyan-400 glow-text">Divine</span> Conversation
-            </h1>
-            <p className="text-gray-300 max-w-2xl mx-auto leading-relaxed">
-              Have a question or ready to transform your business? We'd love to hear from you.
-              Our sacred team is ready to guide you on the path to digital transcendence.
-            </p>
-          </motion.div>
+    <div className="container py-14 grid gap-8 lg:grid-cols-2">
+      <section>
+        <h1 className="text-4xl font-bold">Contact us</h1>
+        <p className="mt-4 text-slate-300">
+          Tell us your current stage and priorities. We&apos;ll recommend a practical action plan.
+        </p>
+
+        <div className="mt-6 service-card space-y-3 text-sm text-slate-300">
+          <p><span className="font-semibold">Agency:</span> Shri Nandi Marketing Agency</p>
+          <p><span className="font-semibold">WhatsApp:</span> <a className="text-cyan-300 hover:underline" href="https://wa.me/918930609914" target="_blank" rel="noopener noreferrer">8930609914</a></p>
+          <p><span className="font-semibold">Phone:</span> <a className="text-cyan-300 hover:underline" href="tel:+918930609914">+91 8930609914</a></p>
+          <p><span className="font-semibold">Email:</span> <a className="text-cyan-300 hover:underline" href="mailto:contact@shrinandimarketing.com">contact@shrinandimarketing.com</a></p>
+          <p><span className="font-semibold">Location:</span> Rewari, Haryana</p>
+          <p className="text-slate-400">Fastest response: WhatsApp 8930609914.</p>
         </div>
       </section>
 
-      <div className="py-20">
-        <div className="container">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Contact Form */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              <div className="shiva-card">
-                <h2 className="text-2xl font-semibold mb-6 text-cyan-400">Send Us a Message</h2>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium mb-2 text-gray-300">
-                      Your Name
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg text-white placeholder-gray-500 outline-none transition-all duration-300"
-                      style={{ background: 'rgba(10,10,20,0.8)', border: '1px solid rgba(49,46,129,0.5)' }}
-                      onFocus={(e) => e.target.style.borderColor = 'rgba(34,211,238,0.6)'}
-                      onBlur={(e) => e.target.style.borderColor = 'rgba(49,46,129,0.5)'}
-                      placeholder="e.g. Rajesh Sharma"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium mb-2 text-gray-300">
-                      Email Address
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg text-white placeholder-gray-500 outline-none transition-all duration-300"
-                      style={{ background: 'rgba(10,10,20,0.8)', border: '1px solid rgba(49,46,129,0.5)' }}
-                      onFocus={(e) => e.target.style.borderColor = 'rgba(34,211,238,0.6)'}
-                      onBlur={(e) => e.target.style.borderColor = 'rgba(49,46,129,0.5)'}
-                      placeholder="your@email.com"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="message" className="block text-sm font-medium mb-2 text-gray-300">
-                      Your Message
-                    </label>
-                    <textarea
-                      id="message"
-                      value={formData.message}
-                      onChange={handleChange}
-                      rows={6}
-                      className="w-full px-4 py-3 rounded-lg text-white placeholder-gray-500 outline-none transition-all duration-300 resize-none"
-                      style={{ background: 'rgba(10,10,20,0.8)', border: '1px solid rgba(49,46,129,0.5)' }}
-                      onFocus={(e) => e.target.style.borderColor = 'rgba(34,211,238,0.6)'}
-                      onBlur={(e) => e.target.style.borderColor = 'rgba(49,46,129,0.5)'}
-                      placeholder="Tell us about your business and marketing goals..."
-                      required
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={status === 'loading'}
-                    className="btn btn-primary w-full disabled:opacity-50"
-                  >
-                    {status === 'loading' ? 'Sending...' : 'Send Sacred Message'}
-                  </button>
-                  {status === 'success' && (
-                    <p className="text-cyan-400 text-center">🙏 Message sent! We'll respond within 24 hours.</p>
-                  )}
-                  {status === 'error' && (
-                    <p className="text-red-400 text-center">Unable to send message. Please try again.</p>
-                  )}
-                  {status === 'unavailable' && (
-                    <div className="shiva-card text-center">
-                      <p className="text-yellow-400 text-sm mb-2">Form submission coming soon.</p>
-                      <p className="text-gray-400 text-sm">
-                        Please email us directly at{' '}
-                        <a href="mailto:contact@shreenadimarketing.com" className="text-cyan-400 hover:underline">
-                          contact@shreenadimarketing.com
-                        </a>
-                      </p>
-                    </div>
-                  )}
-                </form>
-              </div>
-            </motion.div>
+      <section className="service-card">
+        <h2 className="text-2xl font-semibold text-cyan-300">Get a quotation</h2>
+        <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+          <input className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3" placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
+          <input className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3" placeholder="Business name" value={form.business_name} onChange={(e) => setForm({ ...form, business_name: e.target.value })} required />
+          <input className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3" placeholder="WhatsApp number" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} required />
+          <input className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3" type="email" placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
 
-            {/* Contact Info + Map */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="flex flex-col gap-8"
-            >
-              <div className="shiva-card">
-                <h2 className="text-2xl font-semibold mb-6 text-cyan-400">Contact Information</h2>
-                <ul className="space-y-5">
-                  <li className="flex items-start gap-4">
-                    <div className="mt-0.5 flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
-                      style={{ background: 'rgba(34,211,238,0.1)', border: '1px solid rgba(34,211,238,0.3)' }}>
-                      <Mail className="h-5 w-5 text-cyan-400" />
-                    </div>
-                    <div>
-                      <div className="text-xs text-gray-500 uppercase tracking-widest mb-1">Email</div>
-                      <a href="mailto:contact@shreenadimarketing.com" className="text-gray-200 hover:text-cyan-400 transition-colors">
-                        contact@shreenadimarketing.com
-                      </a>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-4">
-                    <div className="mt-0.5 flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
-                      style={{ background: 'rgba(34,211,238,0.1)', border: '1px solid rgba(34,211,238,0.3)' }}>
-                      <Phone className="h-5 w-5 text-cyan-400" />
-                    </div>
-                    <div>
-                      <div className="text-xs text-gray-500 uppercase tracking-widest mb-1">Phone</div>
-                      <a href="tel:+919992021159" className="text-gray-200 hover:text-cyan-400 transition-colors">
-                        +91 9992021159
-                      </a>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-4">
-                    <div className="mt-0.5 flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
-                      style={{ background: 'rgba(37,211,102,0.1)', border: '1px solid rgba(37,211,102,0.3)' }}>
-                      <MessageCircleMore className="h-5 w-5 text-green-400" />
-                    </div>
-                    <div>
-                      <div className="text-xs text-gray-500 uppercase tracking-widest mb-1">WhatsApp</div>
-                      <a
-                        href="https://wa.me/919992021159?text=Hello%2C%20I%20am%20interested%20in%20your%20marketing%20services."
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-gray-200 hover:text-green-400 transition-colors"
-                      >
-                        Chat with us on WhatsApp
-                      </a>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-4">
-                    <div className="mt-0.5 flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
-                      style={{ background: 'rgba(34,211,238,0.1)', border: '1px solid rgba(34,211,238,0.3)' }}>
-                      <MapPin className="h-5 w-5 text-cyan-400" />
-                    </div>
-                    <div>
-                      <div className="text-xs text-gray-500 uppercase tracking-widest mb-1">Office</div>
-                      <span className="text-gray-200">Rewari, Haryana, India</span>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-4">
-                    <div className="mt-0.5 flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
-                      style={{ background: 'rgba(34,211,238,0.1)', border: '1px solid rgba(34,211,238,0.3)' }}>
-                      <Clock className="h-5 w-5 text-cyan-400" />
-                    </div>
-                    <div>
-                      <div className="text-xs text-gray-500 uppercase tracking-widest mb-1">Hours</div>
-                      <span className="text-gray-200">Mon – Sat, 9:00 AM – 7:00 PM IST</span>
-                    </div>
-                  </li>
-                </ul>
-              </div>
+          <select
+            className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3"
+            value={form.business_stage}
+            onChange={(e) => setForm({ ...form, business_stage: e.target.value as InquiryPayload['business_stage'] })}
+          >
+            <option value="idea">Idea stage</option>
+            <option value="early">Early traction</option>
+            <option value="growing">Growing</option>
+            <option value="established">Established</option>
+          </select>
 
-              {/* Map */}
-              <div className="rounded-xl overflow-hidden" style={{ height: '280px', border: '1px solid rgba(49,46,129,0.4)' }}>
-                <MapContainer
-                  center={LOCATION}
-                  zoom={13}
-                  style={{ height: '100%', width: '100%' }}
-                >
-                  <TileLayer
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          <div>
+            <p className="text-sm text-slate-300 mb-2">What do you need help with?</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {serviceOptions.map((service) => (
+                <label key={service} className="text-sm text-slate-300 flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={form.services_interested.includes(service)}
+                    onChange={() => toggleService(service)}
                   />
-                  <Marker position={LOCATION}>
-                    <Popup>
-                      Shree Nandi Marketing Services · Rewari, Haryana
-                    </Popup>
-                  </Marker>
-                </MapContainer>
-              </div>
-            </motion.div>
+                  {service}
+                </label>
+              ))}
+            </div>
           </div>
-        </div>
-      </div>
+
+          <textarea
+            className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 min-h-28"
+            placeholder="Describe your current business stage, monthly revenue range, and goals"
+            value={form.message}
+            onChange={(e) => setForm({ ...form, message: e.target.value })}
+            required
+          />
+
+          <button className="btn btn-primary w-full" type="submit" disabled={status === 'loading'}>
+            {status === 'loading' ? 'Submitting…' : 'Get a free 20-minute consultation'}
+          </button>
+
+          {status === 'success' && <p className="text-emerald-400 text-sm">Thanks, your request has been submitted.</p>}
+          {status === 'error' && <p className="text-red-400 text-sm">Submission failed. Please WhatsApp us at 8930609914.</p>}
+        </form>
+      </section>
     </div>
   );
 };
