@@ -12,6 +12,15 @@ function getHeaders(): HeadersInit {
   };
 }
 
+export class ApiError extends Error {
+  status: number;
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+  }
+}
+
 async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
   const res = await fetch(buildUrl(path), {
     method,
@@ -21,7 +30,7 @@ async function request<T>(method: string, path: string, body?: unknown): Promise
 
   if (!res.ok) {
     const errorBody = (await res.json().catch(() => ({ error: 'Request failed' }))) as { error?: string };
-    throw new Error(errorBody.error || `Request failed (${res.status})`);
+    throw new ApiError(errorBody.error || `Request failed (${res.status})`, res.status);
   }
 
   if (res.status === 204) {
