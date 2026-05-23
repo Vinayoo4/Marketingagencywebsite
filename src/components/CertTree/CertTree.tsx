@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { api } from '../../lib/api';
 import type { CertificationTree, CertNode } from '../../types/certification';
 import CertNodeView from './CertNode';
 import NodeDetailPanel from './NodeDetailPanel';
@@ -12,47 +13,53 @@ export default function CertTree() {
   const [xp, setXp] = useState<number>(0);
   const [viewMode, setViewMode] = useState<'chronological' | 'bfs'>('chronological');
   const [toast, setToast] = useState<string | null>(null);
+  const [patchError, setPatchError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/certifications')
-      .then((r) => r.json())
-      .then((d: CertificationTree) => {
+    api.getCertifications()
+      .then((d) => {
         setTree(d);
         const total = d.nodes.reduce((s, n) => s + (n.xp || 0), 0);
         setXp(total);
       })
-      .catch(() => setTree(null));
+      .catch(() => {
+        setTree(null);
+        setPatchError('Failed to load certifications');
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const markComplete = useCallback(async (nodeId: string) => {
     if (!tree) return;
+    setPatchError(null);
     const updatedNodes = tree.nodes.map((n) =>
       n.id === nodeId ? { ...n, status: 'completed' as const } : n
     );
-    const res = await fetch(`/api/certifications/${tree.id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nodes: updatedNodes }),
-    });
-    if (!res.ok) return;
-    const updated: CertificationTree = await res.json();
-    setTree(updated);
-    const total = updated.nodes.reduce((s, n) => s + (n.xp || 0), 0);
-    const prevLevel = getLevel(xp);
-    setXp(total);
-    const newLevel = getLevel(total);
-    const gained = updated.nodes.find((n) => n.id === nodeId);
-    if (gained?.xp) {
-      const msg = newLevel > prevLevel
-        ? `+${gained.xp} XP — Level ${newLevel}!`
-        : `+${gained.xp} XP`;
-      setToast(msg);
-      setTimeout(() => setToast(null), 2500);
+    try {
+      const updated = await api.updateCertification(tree.id, { nodes: updatedNodes });
+      setTree(updated);
+      const total = updated.nodes.reduce((s, n) => s + (n.xp || 0), 0);
+      const prevLevel = getLevel(xp);
+      setXp(total);
+      const newLevel = getLevel(total);
+      const gained = updated.nodes.find((n) => n.id === nodeId);
+      if (gained?.xp) {
+        const msg = newLevel > prevLevel
+          ? `+${gained.xp} XP — Level ${newLevel}!`
+          : `+${gained.xp} XP`;
+        setToast(msg);
+        setTimeout(() => setToast(null), 2500);
+      }
+      setActiveNode((prev) =>
+        prev?.id === nodeId ? { ...prev, status: 'completed' } : prev
+      );
+    } catch {
+      setPatchError('Failed to update. Please try again.');
     }
-    setActiveNode((prev) =>
-      prev?.id === nodeId ? { ...prev, status: 'completed' } : prev
-    );
   }, [tree, xp]);
+
+  const nodeMap = new Map((tree?.nodes || []).map((n) => [n.id, n]));
 
   const orderedNodes = tree?.nodes
     ? viewMode === 'bfs'
@@ -60,7 +67,7 @@ export default function CertTree() {
       : [...tree.nodes].sort((a, b) => (a.year || 0) - (b.year || 0))
     : [];
 
-  if (!tree) {
+  if (loading) {
     return (
       <div className="text-center py-16">
         <div className="w-10 h-10 border-2 border-nandi-gold border-t-transparent rounded-full animate-spin mx-auto mb-4" />
@@ -69,17 +76,38 @@ export default function CertTree() {
     );
   }
 
+  if (!tree || patchError) {
+    return (
+      <div className="text-center py-16">
+        <p className="text-slate-400 text-sm">{patchError || 'No certification data available'}</p>
+        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2 bg-nandi-blue text-white text-sm rounded-lg hover:bg-nandi-blue/80 transition-colors">
+          Retry
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      {toast && (
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0 }}
-          className="fixed top-20 right-6 z-50 bg-nandi-gold text-black px-4 py-2 rounded-lg shadow-lg text-sm font-semibold"
-        >
-          {toast}
-        </motion.div>
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            key="toast"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed top-20 right-6 z-50 bg-nandi-gold text-black px-4 py-2 rounded-lg shadow-lg text-sm font-semibold"
+          >
+            {toast}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {patchError && (
+        <div className="bg-red-900/30 border border-red-500/30 text-red-300 text-sm px-4 py-2 rounded-lg">
+          {patchError}
+          <button onClick={() => setPatchError(null)} className="ml-2 underline">Dismiss</button>
+        </div>
       )}
 
       <div className="flex items-center justify-between">
@@ -138,7 +166,7 @@ export default function CertTree() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="md:col-span-2">
-          <NodeDetailPanel node={activeNode} onMarkComplete={() => activeNode && markComplete(activeNode.id)} />
+          <NodeDetailPanel node={activeNode} nodeMap={nodeMap} onMarkComplete={() => activeNode && markComplete(activeNode.id)} />
         </div>
         <div>
           <XPBar xp={xp} />
@@ -155,16 +183,18 @@ function bfsTraversal(nodes: CertNode[]): CertNode[] {
   const queue: string[] = [];
 
   const roots = nodes.filter((n) => !n.prerequisites || n.prerequisites.length === 0);
-  roots.forEach((r) => { if (!visited.has(r.id)) { visited.add(r.id); queue.push(r.id); } });
+  roots.forEach((r) => {
+    if (!visited.has(r.id)) { visited.add(r.id); queue.push(r.id); }
+  });
 
   while (queue.length > 0) {
     const currentId = queue.shift()!;
     const current = nodeMap.get(currentId);
     if (current) result.push(current);
     const children = nodes.filter((n) => n.prerequisites?.includes(currentId));
-    children.forEach((c) => {
+    for (const c of children) {
       if (!visited.has(c.id)) { visited.add(c.id); queue.push(c.id); }
-    });
+    }
   }
   return result;
 }

@@ -37,6 +37,7 @@ export default {
         'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
         'float': 'float 3s ease-in-out infinite',
         'shimmer': 'shimmer 2s linear infinite',
+        'fade-in': 'fadeIn 0.2s ease-out',
       },
       keyframes: {
         pulseGlow: {
@@ -50,6 +51,10 @@ export default {
         shimmer: {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
+        },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
         },
       },
       backgroundImage: {

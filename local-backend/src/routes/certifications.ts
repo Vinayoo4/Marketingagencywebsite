@@ -1,5 +1,14 @@
 import { Router } from 'express';
+import rateLimit from 'express-rate-limit';
 import { readJsonFile, writeJsonFile } from '../store.js';
+
+const certLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests.' },
+});
 
 interface CertNode {
   id: string;
@@ -21,7 +30,7 @@ interface CertTree {
 
 const router = Router();
 
-router.get('/api/certifications', async (_req, res) => {
+router.get('/api/certifications', certLimiter, async (_req, res) => {
   try {
     const data = await readJsonFile<CertTree>('certifications.json');
     res.json(data);
@@ -30,7 +39,7 @@ router.get('/api/certifications', async (_req, res) => {
   }
 });
 
-router.patch('/api/certifications/:id', async (req, res) => {
+router.patch('/api/certifications/:id', certLimiter, async (req, res) => {
   const id = req.params.id;
   const payload = req.body;
 

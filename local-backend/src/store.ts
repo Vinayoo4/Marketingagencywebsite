@@ -11,5 +11,13 @@ export async function readJsonFile<T>(fileName: string): Promise<T> {
 
 export async function writeJsonFile<T>(fileName: string, payload: T): Promise<void> {
   const filePath = path.join(dataDir, fileName);
-  await fs.writeFile(filePath, JSON.stringify(payload, null, 2), 'utf-8');
+  const bakPath = filePath + '.bak';
+  const tmpPath = filePath + '.tmp';
+
+  if (await fs.stat(filePath).then(() => true).catch(() => false)) {
+    await fs.copyFile(filePath, bakPath).catch(() => {});
+  }
+
+  await fs.writeFile(tmpPath, JSON.stringify(payload, null, 2), 'utf-8');
+  await fs.rename(tmpPath, filePath);
 }

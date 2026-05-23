@@ -40,7 +40,7 @@ export default function NarrativePanel({ metrics }: Props) {
   if (!metrics) {
     return (
       <div className="bg-slate-800/40 border border-slate-700/30 rounded-xl p-5">
-        <p className="text-sm text-slate-400">Select a node to view narrative insights</p>
+        <p className="text-sm text-slate-400">Select a period to view narrative insights</p>
       </div>
     );
   }

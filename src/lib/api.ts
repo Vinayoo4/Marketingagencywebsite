@@ -101,6 +101,9 @@ export interface AdminLoginResponse {
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type JsonValue = any;
+
 export const api = {
   health: () => request<{ status: string }>('GET', '/health'),
   getServices: () => request<Service[]>('GET', '/api/services'),
@@ -111,4 +114,7 @@ export const api = {
   adminInquiries: () => request<Inquiry[]>('GET', '/api/inquiries'),
   adminUpdateInquiry: (id: string, data: Partial<Pick<Inquiry, 'status' | 'admin_notes'>>) =>
     request<{ success: boolean; inquiry: Inquiry }>('PATCH', `/api/inquiries/${id}`, data),
+  getCertifications: () => request<JsonValue>('GET', '/api/certifications'),
+  updateCertification: (id: string, data: JsonValue) =>
+    request<JsonValue>('PATCH', `/api/certifications/${id}`, data),
 };

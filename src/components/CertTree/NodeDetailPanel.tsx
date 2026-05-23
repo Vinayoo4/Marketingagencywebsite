@@ -3,10 +3,11 @@ import type { CertNode } from '../../types/certification';
 
 interface Props {
   node: CertNode | null;
+  nodeMap: Map<string, CertNode>;
   onMarkComplete?: () => void;
 }
 
-export default function NodeDetailPanel({ node, onMarkComplete }: Props) {
+export default function NodeDetailPanel({ node, nodeMap, onMarkComplete }: Props) {
   if (!node) {
     return (
       <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6 text-center">
@@ -54,11 +55,14 @@ export default function NodeDetailPanel({ node, onMarkComplete }: Props) {
         <div>
           <p className="text-xs text-slate-500 uppercase tracking-wide">Prerequisites</p>
           <div className="flex flex-wrap gap-1.5 mt-1">
-            {node.prerequisites.map((p) => (
-              <span key={p} className="text-xs bg-slate-700 text-slate-300 px-2 py-0.5 rounded">
-                {p}
-              </span>
-            ))}
+            {node.prerequisites.map((p) => {
+              const prereqNode = nodeMap.get(p);
+              return (
+                <span key={p} className="text-xs bg-slate-700 text-slate-300 px-2 py-0.5 rounded">
+                  {prereqNode?.label || p}
+                </span>
+              );
+            })}
           </div>
         </div>
       )}
