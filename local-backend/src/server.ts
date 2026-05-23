@@ -4,6 +4,7 @@ import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import { readJsonFile, writeJsonFile } from './store.js';
 import type { AdminUser, Inquiry, Service, Testimonial } from './types.js';
+import certificationsRouter from './routes/certifications.js';
 
 const app = express();
 const PORT = Number(process.env.PORT || 3001);
@@ -172,6 +173,8 @@ app.patch('/api/inquiries/:id', requireAdmin, adminLimiter, async (req, res) => 
   await writeJsonFile('inquiries.json', db);
   res.json({ success: true, inquiry });
 });
+
+app.use(certificationsRouter);
 
 app.use((_req, res) => {
   res.status(404).json({ error: 'Not found' });

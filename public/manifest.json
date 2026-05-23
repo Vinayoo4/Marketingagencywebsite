@@ -1,0 +1,12 @@
+{
+  "name": "Shri Nandi Marketing Agency",
+  "short_name": "ShriNandi",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#233CB5",
+  "description": "Digital marketing, e-commerce operations, and growth systems for small businesses.",
+  "icons": [
+    { "src": "/vite.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

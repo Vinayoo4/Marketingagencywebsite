@@ -14,6 +14,13 @@ export default {
           gold: '#d4af37',
           saffron: '#ff6b00',
         },
+        nandi: {
+          blue: '#233CB5',
+          gold: '#BF9113',
+          orange: '#E26912',
+          olive: '#909648',
+          pink: '#F1ACC6',
+        },
         accent: {
           DEFAULT: '#22d3ee',
           dark: '#0891b2',

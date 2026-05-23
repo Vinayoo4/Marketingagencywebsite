@@ -5,6 +5,7 @@ import { Menu, X, ChevronDown, Zap } from 'lucide-react';
 const navItems = [
   { label: 'Home', to: '/' },
   { label: 'Services', to: '/services' },
+  { label: 'Certifications', to: '/certifications' },
   { label: 'About', to: '/about' },
   { label: 'Contact', to: '/contact' },
 ];
