@@ -72,10 +72,16 @@ const Contact = () => {
           animate={{ opacity: 1, scale: 1 }}
           className="glass-card max-w-lg mx-auto p-10 text-center"
         >
-          <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-5">
-            <CheckCircle className="w-8 h-8 text-emerald-400" />
+          <div className="w-20 h-20 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-5">
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1, rotate: 360 }}
+              transition={{ type: 'spring', stiffness: 200, damping: 10 }}
+            >
+              <CheckCircle className="w-10 h-10 text-emerald-400" />
+            </motion.div>
           </div>
-          <h2 className="text-2xl font-bold text-white">Thank you!</h2>
+          <h2 className="text-2xl font-bold text-white font-display">Thank you!</h2>
           <p className="mt-3 text-sm text-slate-400">
             Your inquiry has been submitted. We&apos;ll get back to you within 24 hours.
           </p>
@@ -89,18 +95,21 @@ const Contact = () => {
 
   return (
     <div>
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/5 via-transparent to-transparent pointer-events-none" />
-        <div className="container pt-16 pb-12 md:pt-24 md:pb-16">
+      <section className="relative min-h-[50vh] flex items-center overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/10 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute top-20 right-[20%] w-[350px] h-[350px] bg-cyan-500/15 rounded-full blur-[120px] animate-float-slow pointer-events-none" />
+        <div className="absolute bottom-10 left-[10%] w-[250px] h-[250px] bg-violet-500/10 rounded-full blur-[100px] animate-pulse-slow pointer-events-none" />
+        <div className="absolute inset-0 bg-grid-pattern bg-grid opacity-20 pointer-events-none" />
+        <div className="container relative pt-20 pb-16 md:pt-28 md:pb-20">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-400/10 border border-cyan-400/20 text-xs text-cyan-300 mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-cyan-400/10 to-violet-400/10 border border-cyan-400/20 text-xs text-cyan-300 mb-6">
               Get In Touch
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold max-w-3xl leading-tight">
+            <h1 className="text-5xl md:text-7xl font-bold max-w-3xl leading-[1.05] tracking-tight font-display">
               Let&apos;s build your{' '}
               <span className="glow-text">growth plan</span>
             </h1>
-            <p className="mt-4 text-lg text-slate-300 max-w-2xl">
+            <p className="mt-4 text-lg md:text-xl text-slate-300 max-w-2xl leading-relaxed">
               Tell us your current stage and priorities. We&apos;ll recommend a practical action plan.
             </p>
           </motion.div>
@@ -111,7 +120,7 @@ const Contact = () => {
         <div className="grid gap-8 lg:grid-cols-5">
           <div className="lg:col-span-2 space-y-4">
             <div className="glass-card p-6">
-              <h3 className="text-lg font-semibold text-white mb-4">Contact Information</h3>
+              <h3 className="text-lg font-semibold text-white mb-4 font-display">Contact Information</h3>
               <div className="space-y-4">
                 <a
                   href="https://wa.me/918930609914"
@@ -163,7 +172,7 @@ const Contact = () => {
               </div>
             </div>
             <div className="glass-card p-6">
-              <h3 className="text-sm font-semibold text-white mb-2">Fastest Response</h3>
+              <h3 className="text-sm font-semibold text-white mb-2 font-display">Fastest Response</h3>
               <p className="text-sm text-slate-400">We respond quickest on WhatsApp. Message us anytime.</p>
               <a
                 href="https://wa.me/918930609914"
@@ -178,8 +187,13 @@ const Contact = () => {
           </div>
 
           <div className="lg:col-span-3">
-            <div className="glass-card p-6 md:p-8">
-              <h2 className="text-2xl font-semibold text-white">Get a Quotation</h2>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="glass-card p-6 md:p-8"
+            >
+              <h2 className="text-2xl font-semibold text-white font-display">Get a Quotation</h2>
               <p className="mt-1 text-sm text-slate-400">Fill in the details and we&apos;ll get back to you.</p>
 
               <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
@@ -240,9 +254,12 @@ const Contact = () => {
                 <div>
                   <p className="text-sm text-slate-300 mb-2">What do you need help with?</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {serviceOptions.map((service) => (
-                      <label
+                    {serviceOptions.map((service, idx) => (
+                      <motion.label
                         key={service}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.03 }}
                         className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm cursor-pointer transition-all duration-200 ${
                           form.services_interested.includes(service)
                             ? 'bg-cyan-400/10 border border-cyan-400/30 text-cyan-300'
@@ -265,7 +282,7 @@ const Contact = () => {
                           )}
                         </div>
                         {service}
-                      </label>
+                      </motion.label>
                     ))}
                   </div>
                 </div>
@@ -280,29 +297,40 @@ const Contact = () => {
                   {errors.message && <p className="mt-1 text-xs text-red-400">{errors.message}</p>}
                 </div>
 
-                <button
+                <motion.button
                   className="btn btn-primary w-full gap-2"
                   type="submit"
                   disabled={status === 'loading'}
+                  whileTap={{ scale: 0.98 }}
                 >
                   {status === 'loading' ? (
-                    <>Submitting...</>
+                    <span className="flex items-center gap-2">
+                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                      </svg>
+                      Submitting...
+                    </span>
                   ) : (
                     <>
                       <Send className="w-4 h-4" />
                       Get a free 20-minute consultation
                     </>
                   )}
-                </button>
+                </motion.button>
 
                 {status === 'error' && (
-                  <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 rounded-xl px-4 py-3">
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 rounded-xl px-4 py-3"
+                  >
                     <AlertCircle className="w-4 h-4 shrink-0" />
                     Submission failed. Please WhatsApp us at 8930609914.
-                  </div>
+                  </motion.div>
                 )}
               </form>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>

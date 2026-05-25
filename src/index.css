@@ -30,6 +30,7 @@
     -moz-osx-font-smoothing: grayscale;
     color: #e2e8f0;
     background: var(--bg-primary);
+    overflow-x: hidden;
   }
 
   #root {
@@ -78,15 +79,15 @@
   }
 
   .btn-primary {
-    @apply bg-gradient-to-r from-cyan-500 to-cyan-400 text-slate-900 hover:from-cyan-400 hover:to-cyan-300 shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40;
+    @apply bg-gradient-to-r from-cyan-500 to-cyan-400 text-slate-900 hover:from-cyan-400 hover:to-cyan-300 shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 active:scale-[0.97];
   }
 
   .btn-secondary {
-    @apply border border-cyan-400/40 text-cyan-300 hover:bg-cyan-400/10 hover:border-cyan-400/60;
+    @apply border border-cyan-400/40 text-cyan-300 hover:bg-cyan-400/10 hover:border-cyan-400/60 active:scale-[0.97];
   }
 
   .btn-violet {
-    @apply bg-gradient-to-r from-violet-500 to-purple-500 text-white hover:from-violet-400 hover:to-purple-400 shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40;
+    @apply bg-gradient-to-r from-violet-500 to-purple-500 text-white hover:from-violet-400 hover:to-purple-400 shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 active:scale-[0.97];
   }
 
   .glass-card {
@@ -162,6 +163,38 @@
     background: linear-gradient(90deg, rgba(17,26,43,0.6) 25%, rgba(34,211,238,0.08) 50%, rgba(17,26,43,0.6) 75%);
     background-size: 200% 100%;
     animation: shimmer 1.5s ease-in-out infinite;
+  }
+
+  .text-gradient-animate {
+    background-size: 200% auto;
+    animation: gradient 4s ease infinite;
+  }
+
+  .card-tilt {
+    transform-style: preserve-3d;
+    perspective: 1000px;
+  }
+
+  .animate-in {
+    animation: scaleIn 0.5s ease-out forwards, slideUp 0.5s ease-out forwards;
+  }
+
+  .noise-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.015;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
+  }
+
+  .text-reveal {
+    overflow: hidden;
   }
 }
 

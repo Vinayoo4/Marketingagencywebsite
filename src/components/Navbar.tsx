@@ -22,7 +22,7 @@ const Navbar = () => {
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', onScroll);
+    window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
@@ -40,43 +40,52 @@ const Navbar = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? 'bg-[#070f1c]/90 backdrop-blur-xl shadow-lg shadow-black/20 border-b border-white/5'
+          ? 'bg-[#070f1c]/80 backdrop-blur-2xl shadow-2xl shadow-black/30 border-b border-white/5'
           : 'bg-transparent'
       }`}
     >
       <div className="container">
         <div className="flex items-center justify-between h-16 md:h-20">
           <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 to-violet-500 flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 via-violet-500 to-purple-500 flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:scale-110 group-hover:shadow-cyan-400/40 transition-all duration-300">
               <Zap className="w-5 h-5 text-white" />
             </div>
             <div>
-              <p className="text-sm font-bold text-white tracking-tight">Shri Nandi</p>
+              <p className="text-sm font-bold text-white tracking-tight font-display">Shri Nandi</p>
               <p className="text-[10px] text-slate-400 leading-tight -mt-0.5">Marketing Agency</p>
             </div>
           </Link>
 
           <nav className="hidden md:flex items-center gap-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.label}
-                to={item.to}
-                className={`px-4 py-2 text-sm rounded-lg transition-all duration-200 ${
-                  location.pathname === item.to
-                    ? 'text-cyan-300 bg-cyan-400/10'
-                    : 'text-slate-300 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              const isActive = location.pathname === item.to;
+              return (
+                <Link
+                  key={item.label}
+                  to={item.to}
+                  className={`relative px-4 py-2 text-sm rounded-lg transition-all duration-200 ${
+                    isActive
+                      ? 'text-cyan-300'
+                      : 'text-slate-300 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  {isActive && (
+                    <span className="absolute inset-0 bg-cyan-400/10 rounded-lg animate-fade-in" />
+                  )}
+                  <span className="relative z-10">{item.label}</span>
+                  {isActive && (
+                    <span className="absolute -bottom-0.5 left-2 right-2 h-0.5 bg-gradient-to-r from-cyan-400 to-violet-400 rounded-full" />
+                  )}
+                </Link>
+              );
+            })}
             <div className="relative group">
               <button className="flex items-center gap-1 px-4 py-2 text-sm text-slate-300 hover:text-white rounded-lg hover:bg-white/5 transition-all duration-200">
-                Explore <ChevronDown className="w-3.5 h-3.5" />
+                Explore <ChevronDown className="w-3.5 h-3.5 group-hover:rotate-180 transition-transform duration-200" />
               </button>
-              <div className="absolute top-full right-0 mt-1 w-48 py-2 bg-[#0b1220]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+              <div className="absolute top-full right-0 mt-1 w-48 py-2 bg-[#0b1220]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-1 group-hover:translate-y-0">
                 {anchorLinks.map((item) => (
                   <a
                     key={item.label}
@@ -93,7 +102,7 @@ const Navbar = () => {
               href="https://wa.me/918930609914"
               target="_blank"
               rel="noopener noreferrer"
-              className="ml-3 inline-flex items-center gap-2 text-xs font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 px-4 py-2 rounded-full shadow-lg shadow-emerald-600/25 hover:shadow-emerald-500/40 transition-all"
+              className="ml-3 inline-flex items-center gap-2 text-xs font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 px-4 py-2 rounded-full shadow-lg shadow-emerald-600/25 hover:shadow-emerald-500/40 hover:scale-105 transition-all duration-200"
             >
               <span className="w-2 h-2 rounded-full bg-emerald-300 animate-pulse" />
               WhatsApp
@@ -110,20 +119,23 @@ const Navbar = () => {
         </div>
 
         {open && (
-          <div className="md:hidden pb-5 space-y-1 animate-fadeIn">
-            {navItems.map((item) => (
-              <Link
-                key={item.label}
-                to={item.to}
-                className={`block px-4 py-3 text-sm rounded-xl transition-colors ${
-                  location.pathname === item.to
-                    ? 'text-cyan-300 bg-cyan-400/10'
-                    : 'text-slate-300 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
+          <div className="md:hidden pb-5 space-y-1 animate-fade-in border-t border-white/5 pt-4">
+            {navItems.map((item) => {
+              const isActive = location.pathname === item.to;
+              return (
+                <Link
+                  key={item.label}
+                  to={item.to}
+                  className={`block px-4 py-3 text-sm rounded-xl transition-colors ${
+                    isActive
+                      ? 'text-cyan-300 bg-cyan-400/10'
+                      : 'text-slate-300 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
             {anchorLinks.map((item) => (
               <a
                 key={item.label}
@@ -138,7 +150,7 @@ const Navbar = () => {
               href="https://wa.me/918930609914"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 mx-4 mt-3 px-4 py-3 text-sm font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-500 rounded-xl transition-all"
+              className="flex items-center justify-center gap-2 mx-4 mt-3 px-4 py-3 text-sm font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-500 rounded-xl transition-all hover:from-emerald-500 hover:to-emerald-400"
             >
               <span className="w-2 h-2 rounded-full bg-emerald-300 animate-pulse" />
               WhatsApp: 8930609914

@@ -77,10 +77,10 @@ const Admin = () => {
       <div className="container py-16 md:py-24">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-sm mx-auto">
           <div className="text-center mb-8">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-400 to-violet-500 flex items-center justify-center mx-auto shadow-xl shadow-cyan-500/20">
-              <User className="w-7 h-7 text-white" />
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-400 to-violet-500 flex items-center justify-center mx-auto shadow-xl shadow-cyan-500/20 animate-float">
+              <User className="w-8 h-8 text-white" />
             </div>
-            <h1 className="mt-4 text-2xl font-bold text-white">Admin Login</h1>
+            <h1 className="mt-4 text-2xl font-bold text-white font-display">Admin Login</h1>
             <p className="mt-1 text-sm text-slate-400">Sign in to manage inquiries</p>
           </div>
 
@@ -105,7 +105,13 @@ const Admin = () => {
               />
             </div>
             {error && (
-              <div className="text-sm text-red-400 bg-red-500/10 rounded-xl px-4 py-3">{error}</div>
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-sm text-red-400 bg-red-500/10 rounded-xl px-4 py-3"
+              >
+                {error}
+              </motion.div>
             )}
             <button className="btn btn-primary w-full" disabled={loading}>
               {loading ? 'Signing in...' : 'Sign in'}
@@ -138,7 +144,7 @@ const Admin = () => {
     <div className="container py-8 md:py-12">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-white">Inquiry Dashboard</h1>
+          <h1 className="text-3xl font-bold text-white font-display">Inquiry Dashboard</h1>
           <p className="text-sm text-slate-400 mt-1">{inquiries.length} total inquiries</p>
         </div>
         <div className="flex items-center gap-2">
@@ -168,7 +174,7 @@ const Admin = () => {
           { label: 'Closed', value: stats.closed, color: 'from-emerald-400 to-green-500' },
         ].map((stat) => (
           <div key={stat.label} className="glass-card p-4 text-center">
-            <p className={`text-2xl md:text-3xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}>
+            <p className={`text-2xl md:text-3xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent font-display`}>
               {stat.value}
             </p>
             <p className="text-xs text-slate-400 mt-1">{stat.label}</p>
@@ -193,7 +199,7 @@ const Admin = () => {
               onClick={() => setFilter(f)}
               className={`px-3 py-2 text-xs rounded-lg transition-all ${
                 filter === f
-                  ? 'bg-cyan-400/15 text-cyan-300 border border-cyan-400/30'
+                  ? 'bg-gradient-to-r from-cyan-500/20 to-violet-500/20 text-cyan-300 border border-cyan-400/30'
                   : 'text-slate-400 border border-white/5 hover:border-white/10'
               }`}
             >
@@ -204,15 +210,22 @@ const Admin = () => {
       </div>
 
       {error && (
-        <div className="mb-4 text-sm text-red-400 bg-red-500/10 rounded-xl px-4 py-3">{error}</div>
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-4 text-sm text-red-400 bg-red-500/10 rounded-xl px-4 py-3"
+        >
+          {error}
+        </motion.div>
       )}
 
       <div className="space-y-4">
-        {visibleInquiries.map((inquiry) => (
+        {visibleInquiries.map((inquiry, idx) => (
           <motion.article
             key={inquiry.id}
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: idx * 0.03 }}
             className="glass-card p-5 md:p-6"
           >
             <div className="grid gap-4 md:grid-cols-3">
@@ -286,10 +299,14 @@ const Admin = () => {
           </motion.article>
         ))}
         {visibleInquiries.length === 0 && (
-          <div className="text-center py-16">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-16"
+          >
             <Inbox className="w-12 h-12 text-slate-600 mx-auto mb-3" />
             <p className="text-slate-400">No inquiries found.</p>
-          </div>
+          </motion.div>
         )}
       </div>
     </div>
