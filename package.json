@@ -5,26 +5,30 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:backend": "npm run dev --prefix local-backend",
+    "dev:full": "npm run dev --prefix local-backend & npm run dev",
     "build": "vite build",
+    "build:backend": "npm run build --prefix local-backend",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.39.7",
+    "animejs": "^3.2.2",
+    "framer-motion": "^11.0.8",
+    "leaflet": "^1.9.4",
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.22.3",
-    "framer-motion": "^11.0.8",
     "react-intersection-observer": "^9.8.1",
     "react-leaflet": "^4.2.1",
-    "leaflet": "^1.9.4"
+    "react-router-dom": "^6.22.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
+    "@types/leaflet": "^1.9.8",
+    "@types/node": "^25.5.0",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
-    "@types/leaflet": "^1.9.8",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.18",
     "eslint": "^9.9.1",

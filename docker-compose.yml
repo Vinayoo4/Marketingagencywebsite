@@ -1,0 +1,24 @@
+version: '3.9'
+
+services:
+  local-backend:
+    build:
+      context: ./local-backend
+    restart: unless-stopped
+    environment:
+      PORT: 3001
+    ports:
+      - '3001:3001'
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    restart: unless-stopped
+    environment:
+      VITE_API_BASE: http://localhost:3001
+      VITE_ENABLE_ADMIN: 'true'
+    ports:
+      - '5173:80'
+    depends_on:
+      - local-backend

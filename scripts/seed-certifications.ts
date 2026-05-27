@@ -1,0 +1,27 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const DATA_PATH = path.join(__dirname, '..', 'data', 'certifications.json');
+
+const SEED = {
+  id: 'growth-intel-2026',
+  title: 'Growth Intelligence 2026',
+  description: 'Progression tree showing certification and growth milestones.',
+  nodes: [
+    { id: 'n2022', label: '2022', year: 2022, status: 'completed', xp: 50, description: 'Foundational systems and marketplace setup.', prerequisites: [] },
+    { id: 'n2023', label: '2023', year: 2023, status: 'completed', xp: 80, description: 'Operational governance and compliance.', prerequisites: ['n2022'] },
+    { id: 'n2024', label: '2024', year: 2024, status: 'in_progress', xp: 30, description: 'Automation and performance intelligence.', prerequisites: ['n2023'] },
+    { id: 'n2025', label: '2025', year: 2025, status: 'locked', xp: 0, description: 'Culture first brand story and scaling.', prerequisites: ['n2024'] },
+    { id: 'n2026', label: '2026', year: 2026, status: 'locked', xp: 0, description: 'Adaptive strategy engine and trust layer.', prerequisites: ['n2025'] },
+  ],
+};
+
+if (!fs.existsSync(DATA_PATH)) {
+  fs.mkdirSync(path.dirname(DATA_PATH), { recursive: true });
+  fs.writeFileSync(DATA_PATH, JSON.stringify(SEED, null, 2), 'utf-8');
+  console.log('Seeded certifications.json');
+} else {
+  console.log('certifications.json already exists');
+}
