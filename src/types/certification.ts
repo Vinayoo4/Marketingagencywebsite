@@ -9,6 +9,7 @@ export interface CertNode {
   status: NodeStatus;
   xp?: number;
   resources?: { title: string; url?: string }[];
+  certificate_url?: string;
 }
 
 export interface CertificationTree {

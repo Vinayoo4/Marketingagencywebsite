@@ -19,6 +19,7 @@ interface CertNode {
   status: string;
   xp?: number;
   resources?: { title: string; url?: string }[];
+  certificate_url?: string;
 }
 
 interface CertTree {

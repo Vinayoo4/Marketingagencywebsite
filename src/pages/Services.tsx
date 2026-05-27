@@ -89,9 +89,10 @@ const Services = () => {
                 key={service.id}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
+                whileHover={{ scale: 1.02 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.06, duration: 0.5 }}
-                className="group relative"
+                className="group relative cursor-pointer"
               >
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500/20 to-violet-500/20 rounded-2xl opacity-0 group-hover:opacity-100 blur transition-all duration-500" />
                 <div className="relative glass-card p-6 md:p-8 group-hover:-translate-y-1">
@@ -130,7 +131,7 @@ const Services = () => {
                       to="/contact"
                       className="text-sm font-medium text-cyan-300 hover:text-cyan-200 transition-colors flex items-center gap-1"
                     >
-                      Book a call <ArrowRight className="w-3.5 h-3.5" />
+                      {service.category === 'marketing' ? 'Request Quote' : service.category === 'ecommerce_ops' ? 'Book Consultation' : 'Discuss Project'} <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                   </div>
                 </div>

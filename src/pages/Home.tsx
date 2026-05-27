@@ -79,8 +79,8 @@ const Home = () => {
             transition={{ duration: 0.7, delay: 0.1 }}
             className="text-5xl md:text-7xl lg:text-8xl font-bold max-w-5xl leading-[1.05] tracking-tight font-display"
           >
-            We turn small brands into{' '}
-            <span className="glow-text text-gradient-animate">serious businesses</span>
+            Your Brand's Story,{' '}
+            <span className="glow-text text-gradient-animate">Engineered for Growth</span>
           </motion.h1>
 
           <motion.p
@@ -89,8 +89,7 @@ const Home = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="mt-6 text-lg md:text-xl text-slate-300 max-w-2xl leading-relaxed"
           >
-            Shri Nandi Marketing Agency combines digital marketing, e-commerce operations, 
-            GST & FSSAI compliance, and AI-powered systems so your business grows without chaos.
+            We blend performance marketing with operational excellence. Scale your operations, automate your workflow, and navigate compliance seamlessly.
           </motion.p>
 
           <motion.div
@@ -178,7 +177,7 @@ const Home = () => {
                   <div className="mt-5 flex items-center justify-between">
                     <span className="text-sm text-slate-400">From ₹{service.starting_price_inr.toLocaleString('en-IN')}</span>
                     <Link to="/contact" className="text-sm text-cyan-300 hover:text-cyan-200 transition-colors font-medium inline-flex items-center gap-1">
-                      Book a call <ArrowRight className="w-3.5 h-3.5" />
+                      {service.category === 'marketing' ? 'Request Quote' : service.category === 'ecommerce_ops' ? 'Book Consultation' : 'Discuss Project'} <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                   </div>
                 </div>
@@ -197,29 +196,42 @@ const Home = () => {
             <h2 className="text-4xl md:text-5xl font-bold font-display">Results & Case Snapshots</h2>
             <p className="mt-4 text-slate-400 max-w-xl mx-auto">Real work for real businesses.</p>
           </div>
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="relative border-l-2 border-cyan-500/30 ml-4 pl-8 space-y-10">
             {caseStudies.map((item, idx) => (
-              <motion.article
+              <motion.div
                 key={item.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1, duration: 0.5 }}
-                className="group relative"
+                className="relative"
               >
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-violet-500/20 to-cyan-500/20 rounded-2xl opacity-0 group-hover:opacity-100 blur transition-all duration-500" />
-                <div className="relative glass-card p-6 group-hover:-translate-y-1">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-400/20 to-violet-400/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <TrendingUp className="w-6 h-6 text-cyan-400" />
+                <div className="absolute -left-[41px] top-1 w-5 h-5 rounded-full bg-cyan-500 border-4 border-slate-900" />
+                <div className="glass-card p-6 group hover:-translate-y-1 transition-transform">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-400/20 to-violet-400/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <TrendingUp className="w-6 h-6 text-cyan-400" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-white">{item.title}</h3>
                   </div>
-                  <h3 className="text-lg font-semibold text-white mb-3">{item.title}</h3>
-                  <div className="space-y-2 text-sm">
-                    <p><span className="text-slate-500">Challenge:</span> <span className="text-slate-300">{item.challenge}</span></p>
-                    <p><span className="text-slate-500">Approach:</span> <span className="text-slate-300">{item.approach}</span></p>
-                    <p><span className="text-slate-500">Outcome:</span> <span className="text-emerald-400 font-medium">{item.outcome}</span></p>
+                  <div className="space-y-3 text-sm">
+                    <p className="flex items-start gap-2">
+                      <span className="text-slate-500 font-medium shrink-0">Challenge:</span>
+                      <span className="text-slate-300">{item.challenge}</span>
+                    </p>
+                    <p className="flex items-start gap-2">
+                      <span className="text-slate-500 font-medium shrink-0">Approach:</span>
+                      <span className="text-slate-300">{item.approach}</span>
+                    </p>
+                    <div className="pt-3 mt-3 border-t border-white/5">
+                      <p className="flex items-start gap-2">
+                        <span className="text-slate-500 font-medium shrink-0">Outcome:</span>
+                        <span className="text-emerald-400 font-medium">{item.outcome}</span>
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </motion.article>
+              </motion.div>
             ))}
           </div>
 
