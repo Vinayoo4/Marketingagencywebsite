@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Zap, Mail, Phone, MapPin, ArrowUpRight } from 'lucide-react';
 
 const services = [
@@ -17,21 +17,30 @@ const quickLinks = [
 ];
 
 const Footer = () => {
+  const navigate = useNavigate();
+
   return (
     <footer className="relative mt-20 border-t border-white/5 bg-[#070f1c] overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/[0.02] via-transparent to-violet-500/[0.02] pointer-events-none" />
       <div className="container py-16 relative z-10">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-1">
-            <Link to="/" className="flex items-center gap-2.5 group">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 via-violet-500 to-purple-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <div className="flex items-center gap-2.5 group">
+              <div
+                className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 via-violet-500 to-purple-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 cursor-default"
+                onDoubleClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  navigate('/admin');
+                }}
+              >
                 <Zap className="w-5 h-5 text-white" />
               </div>
-              <div>
+              <Link to="/" className="flex-1">
                 <p className="text-sm font-bold text-white font-display">Shri Nandi</p>
                 <p className="text-[10px] text-slate-400 -mt-0.5">Marketing Agency</p>
-              </div>
-            </Link>
+              </Link>
+            </div>
             <p className="mt-4 text-sm text-slate-400 leading-relaxed max-w-xs">
               Practical marketing, e-commerce operations, and compliance support for small and medium businesses, D2C brands, and local retailers.
             </p>

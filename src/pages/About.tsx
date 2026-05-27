@@ -1,14 +1,6 @@
-import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Target, Lightbulb, Shield, TrendingUp, ArrowRight, CheckCircle, Quote } from 'lucide-react';
-
-const stats = [
-  { label: 'Brands Served', value: 50, suffix: '+' },
-  { label: 'Years Experience', value: 5, suffix: '+' },
-  { label: 'Client Retention', value: 95, suffix: '%' },
-  { label: 'Avg. Growth', value: 3, suffix: 'x' },
-];
 
 const values = [
   { icon: Target, title: 'Practical First', desc: 'We focus on what actually works for your business, not vanity metrics.' },
@@ -23,30 +15,6 @@ const fadeUp = {
   viewport: { once: true, margin: '-80px' },
   transition: { duration: 0.5 },
 };
-
-function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: string }) {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    if (target === 0) return;
-    const duration = 1500;
-    const steps = 60;
-    const increment = target / steps;
-    let current = 0;
-    const timer = setInterval(() => {
-      current += increment;
-      if (current >= target) {
-        setCount(target);
-        clearInterval(timer);
-      } else {
-        setCount(Math.floor(current));
-      }
-    }, duration / steps);
-    return () => clearInterval(timer);
-  }, [target]);
-
-  return <>{count}{suffix}</>;
-}
 
 const About = () => {
   return (
@@ -74,16 +42,34 @@ const About = () => {
       </section>
 
       <motion.section {...fadeUp} className="container py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {stats.map((stat) => (
-            <div key={stat.label} className="glass-card p-6 text-center group hover:-translate-y-1">
-              <p className="text-4xl md:text-5xl font-bold glow-text-cyan font-display">
-                <AnimatedCounter target={stat.value} suffix={stat.suffix} />
-              </p>
-              <p className="mt-1 text-sm text-slate-400">{stat.label}</p>
-            </div>
-          ))}
+        <div className="text-center mb-14">
+          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-violet-400 mb-3">Our Journey</span>
+          <h2 className="text-4xl md:text-5xl font-bold font-display">Timeline</h2>
         </div>
+        <motion.div
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: true }}
+          variants={{ animate: { transition: { staggerChildren: 0.2 } } }}
+          className="relative border-l-2 border-cyan-500/30 ml-4 md:mx-auto md:max-w-2xl pl-8 space-y-10"
+        >
+          {[
+            { year: '2020', title: 'The Vision', desc: 'Realized e-commerce brands need operational systems, not just ads.' },
+            { year: '2022', title: 'The Launch', desc: 'Started helping local retailers navigate compliance and digital marketplaces.' },
+            { year: '2024', title: 'The Execution', desc: 'Combined BTech AIML engineering with digital scaling strategies.' }
+          ].map((milestone) => (
+            <motion.div
+              key={milestone.year}
+              variants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 } }}
+              className="relative glass-card p-6"
+            >
+              <div className="absolute -left-[41px] top-4 w-5 h-5 rounded-full bg-cyan-500 border-4 border-[#070f1c]" />
+              <h3 className="text-xl font-bold text-cyan-400">{milestone.year}</h3>
+              <h4 className="text-lg font-semibold text-white">{milestone.title}</h4>
+              <p className="text-sm text-slate-300 mt-2">{milestone.desc}</p>
+            </motion.div>
+          ))}
+        </motion.div>
       </motion.section>
 
       <motion.section {...fadeUp} className="container py-12">

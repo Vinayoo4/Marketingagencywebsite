@@ -79,14 +79,20 @@ export default function NodeDetailPanel({ node, nodeMap, onMarkComplete }: Props
         {isLocked && (
           <p className="text-xs text-slate-400 italic">Complete prerequisites first</p>
         )}
-        {isCompleted && (
-          <button
-            onClick={() => window.print()}
+        {isCompleted && node.certificate_url ? (
+          <a
+            href={node.certificate_url}
+            target="_blank"
+            rel="noopener noreferrer"
             className="px-4 py-2 bg-nandi-blue text-white text-sm font-medium rounded-lg hover:bg-nandi-blue/80 transition-colors"
           >
             View certificate
+          </a>
+        ) : isCompleted ? (
+          <button disabled className="px-4 py-2 bg-slate-700 text-slate-400 text-sm font-medium rounded-lg cursor-not-allowed">
+            Certificate unavailable
           </button>
-        )}
+        ) : null}
       </div>
     </motion.div>
   );
