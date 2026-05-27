@@ -31,6 +31,7 @@ const Footer = () => {
                 onDoubleClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
+                  sessionStorage.setItem('admin_unlocked', 'true');
                   navigate('/admin');
                 }}
               >

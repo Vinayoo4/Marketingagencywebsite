@@ -33,9 +33,29 @@ export default function CertTree() {
   const markComplete = useCallback(async (nodeId: string) => {
     if (!tree) return;
     setPatchError(null);
-    const updatedNodes = tree.nodes.map((n) =>
-      n.id === nodeId ? { ...n, status: 'completed' as const } : n
-    );
+
+    const newStatusMap = new Map(tree.nodes.map(n => [n.id, n.status]));
+    newStatusMap.set(nodeId, 'completed');
+
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (const n of tree.nodes) {
+        if (newStatusMap.get(n.id) === 'locked') {
+          const prereqs = n.prerequisites || [];
+          const allCompleted = prereqs.every(p => newStatusMap.get(p) === 'completed');
+          if (allCompleted) {
+            newStatusMap.set(n.id, 'in_progress');
+            changed = true;
+          }
+        }
+      }
+    }
+
+    const updatedNodes = tree.nodes.map((n) => ({
+      ...n,
+      status: newStatusMap.get(n.id) as 'locked' | 'in_progress' | 'completed'
+    }));
     try {
       const updated = await api.updateCertification(tree.id, { nodes: updatedNodes });
       setTree(updated);
@@ -143,7 +163,12 @@ export default function CertTree() {
         <div className="flex items-center justify-center gap-4 md:gap-8 flex-wrap">
           {orderedNodes.map((node, i) => (
             <div key={node.id} className="flex items-center gap-4 md:gap-8">
-              <CertNodeView node={node} index={i} onClick={() => setActiveNode(node)} />
+              <CertNodeView node={node} index={i} onClick={() => {
+                setActiveNode(node);
+                if (node.status === 'in_progress') {
+                  markComplete(node.id);
+                }
+              }} />
               {i < orderedNodes.length - 1 && (
                 <svg className="w-8 md:w-12 h-1" viewBox="0 0 48 4" preserveAspectRatio="none">
                   <motion.line

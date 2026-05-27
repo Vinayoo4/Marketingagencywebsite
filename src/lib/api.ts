@@ -104,17 +104,39 @@ export interface AdminLoginResponse {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type JsonValue = any;
 
+import servicesFallback from '../../data/services.json';
+import testimonialsFallback from '../../data/testimonials.json';
+import certsFallback from '../../data/certifications.json';
+
 export const api = {
   health: () => request<{ status: string }>('GET', '/health'),
-  getServices: () => request<Service[]>('GET', '/api/services'),
-  getTestimonials: () => request<Testimonial[]>('GET', '/api/testimonials'),
+  getServices: async () => {
+    try {
+      return await request<Service[]>('GET', '/api/services');
+    } catch {
+      return servicesFallback.services as Service[];
+    }
+  },
+  getTestimonials: async () => {
+    try {
+      return await request<Testimonial[]>('GET', '/api/testimonials');
+    } catch {
+      return testimonialsFallback.testimonials as Testimonial[];
+    }
+  },
   createInquiry: (payload: InquiryPayload) => request<{ success: boolean; inquiry: Inquiry }>('POST', '/api/inquiries', payload),
   adminLogin: (username: string, password: string) =>
     request<AdminLoginResponse>('POST', '/api/admin/login', { username, password }),
   adminInquiries: () => request<Inquiry[]>('GET', '/api/inquiries'),
   adminUpdateInquiry: (id: string, data: Partial<Pick<Inquiry, 'status' | 'admin_notes'>>) =>
     request<{ success: boolean; inquiry: Inquiry }>('PATCH', `/api/inquiries/${id}`, data),
-  getCertifications: () => request<JsonValue>('GET', '/api/certifications'),
+  getCertifications: async () => {
+    try {
+      return await request<JsonValue>('GET', '/api/certifications');
+    } catch {
+      return certsFallback as JsonValue;
+    }
+  },
   updateCertification: (id: string, data: JsonValue) =>
     request<JsonValue>('PATCH', `/api/certifications/${id}`, data),
 };
