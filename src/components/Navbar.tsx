@@ -5,14 +5,15 @@ import { Menu, X, ChevronDown, Zap } from 'lucide-react';
 const navItems = [
   { label: 'Home', to: '/' },
   { label: 'Services', to: '/services' },
+  { label: 'Catalogue', to: '/catalogue' },
+  { label: 'Quotations', to: '/quotations' },
   { label: 'Certifications', to: '/certifications' },
-  { label: 'About', to: '/about' },
-  { label: 'Contact', to: '/contact' },
 ];
 
 const anchorLinks = [
-  { label: 'Process', to: '/#process' },
-  { label: 'Case Studies', to: '/#case-studies' },
+  { label: 'Offline Campaigns', to: '/offline-campaign' },
+  { label: 'About', to: '/about' },
+  { label: 'Contact', to: '/contact' },
 ];
 
 const Navbar = () => {
@@ -31,11 +32,12 @@ const Navbar = () => {
   }, [location]);
 
   const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    if (location.pathname !== '/') return;
-    e.preventDefault();
-    const id = href.replace('/#', '');
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    if (href.startsWith('/#') && location.pathname === '/') {
+      e.preventDefault();
+      const id = href.replace('/#', '');
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
@@ -87,14 +89,14 @@ const Navbar = () => {
               </button>
               <div className="absolute top-full right-0 mt-1 w-48 py-2 bg-[#0b1220]/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-1 group-hover:translate-y-0">
                 {anchorLinks.map((item) => (
-                  <a
+                  <Link
                     key={item.label}
-                    href={item.to}
-                    onClick={(e) => handleAnchorClick(e, item.to)}
+                    to={item.to}
+                    onClick={(e) => handleAnchorClick(e as unknown as React.MouseEvent<HTMLAnchorElement>, item.to)}
                     className="block px-4 py-2.5 text-sm text-slate-300 hover:text-cyan-300 hover:bg-white/5 transition-colors"
                   >
                     {item.label}
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -137,14 +139,14 @@ const Navbar = () => {
               );
             })}
             {anchorLinks.map((item) => (
-              <a
+              <Link
                 key={item.label}
-                href={item.to}
-                onClick={(e) => { setOpen(false); handleAnchorClick(e, item.to); }}
+                to={item.to}
+                onClick={(e) => { setOpen(false); handleAnchorClick(e as unknown as React.MouseEvent<HTMLAnchorElement>, item.to); }}
                 className="block px-4 py-3 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
               >
                 {item.label}
-              </a>
+              </Link>
             ))}
             <a
               href="https://wa.me/918930609914"

@@ -11,6 +11,7 @@ export interface Inquiry {
   admin_notes: string;
   created_at: string;
   updated_at: string;
+  source?: string;
 }
 
 export interface Service {

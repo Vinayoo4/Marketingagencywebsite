@@ -1,0 +1,27 @@
+[
+  {
+    "id": "faq_1",
+    "question": "Is the quotation valid for all business types?",
+    "answer": "Yes. The quotation framework is designed to be universal and applicable to startups, local businesses, professionals, service brands, institutions, and entrepreneurs, with scope adjustments added only where needed."
+  },
+  {
+    "id": "faq_2",
+    "question": "What is the payment policy?",
+    "answer": "A 50% advance is compulsory at the time of signing or deal confirmation, and the remaining 50% is payable immediately after completion of the agreed campaign or service session."
+  },
+  {
+    "id": "faq_3",
+    "question": "What is included in the 7-day offline campaign?",
+    "answer": "The standard package includes tent-based setup, water distribution presence, branded visibility material, business collateral support, and lead-generation structure. Final inclusions depend on the selected package and approvals."
+  },
+  {
+    "id": "faq_4",
+    "question": "Is 50,000 INR the final price?",
+    "answer": "No. It is the minimum universal starting budget for the 7-day offline activation package. Final pricing can increase based on city, scale, print volume, staffing, and logistics."
+  },
+  {
+    "id": "faq_5",
+    "question": "Can this campaign work for any industry?",
+    "answer": "Yes. The universal structure is designed for broad business relevance, especially for brands or operators who need local visibility, goodwill, and awareness."
+  }
+]

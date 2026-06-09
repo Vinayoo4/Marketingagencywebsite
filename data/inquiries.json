@@ -1,3 +1,20 @@
 {
-  "inquiries": []
+  "inquiries": [
+    {
+      "id": "b1762b13-7a75-4995-82b0-8879f9132ff7",
+      "name": "Test User",
+      "email": "test@test.com",
+      "phone": "1234567890",
+      "business_name": "Test Corp",
+      "business_stage": "early",
+      "services_interested": [
+        "Quotation Request"
+      ],
+      "message": "Test Message\n\nSelected Package: Business Growth Starter\nAdd-ons: Location Multiplier\nTotal Estimated Price: ₹40,000 (Advance: ₹20,000)\nSource: Quotation Generator",
+      "status": "new",
+      "admin_notes": "",
+      "created_at": "2026-06-09T08:56:23.566Z",
+      "updated_at": "2026-06-09T08:56:23.566Z"
+    }
+  ]
 }

@@ -1,0 +1,30 @@
+[
+  {
+    "id": "addon_1",
+    "name": "Location Multiplier",
+    "description": "Expand campaign to additional strategic locations.",
+    "price": "15000",
+    "unit": "per additional location"
+  },
+  {
+    "id": "addon_2",
+    "name": "Extra Campaign Days",
+    "description": "Extend the duration of your offline activation or support.",
+    "price": "5000",
+    "unit": "per day"
+  },
+  {
+    "id": "addon_3",
+    "name": "Additional Support Staff",
+    "description": "Hire extra personnel for crowd management or service execution.",
+    "price": "1500",
+    "unit": "per staff member per day"
+  },
+  {
+    "id": "addon_4",
+    "name": "High-Volume Print Material",
+    "description": "Increase volume of business cards, QR leaflets, or branded collateral.",
+    "price": "3000",
+    "unit": "per 500 units"
+  }
+]

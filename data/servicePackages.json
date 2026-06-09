@@ -1,0 +1,107 @@
+[
+  {
+    "id": "pkg_1",
+    "name": "Business Growth Starter",
+    "targetAudience": "Small business owners, local stores, clinics, coaches",
+    "description": "A compact growth advisory package designed to improve visibility, trust, and inquiry generation for early-stage or local businesses.",
+    "price": "25000",
+    "scope": [
+      "Business profile review.",
+      "Basic brand and market-position audit.",
+      "Lead generation recommendations.",
+      "Digital presence improvement suggestions.",
+      "One follow-up consultation cycle."
+    ],
+    "deliverables": [
+      "Audit summary report.",
+      "30-day growth roadmap.",
+      "Offer and profile improvement notes.",
+      "Basic lead-capture recommendation.",
+      "Two consultation meetings."
+    ]
+  },
+  {
+    "id": "pkg_2",
+    "name": "Marketing Visibility Package",
+    "targetAudience": "Businesses needing local awareness and campaign direction",
+    "description": "A brand awareness package for businesses that need better market visibility, customer recall, and stronger local presence.",
+    "price": "40000",
+    "scope": [
+      "Visibility strategy.",
+      "Content direction.",
+      "Campaign messaging.",
+      "Local branding guidance.",
+      "Online + offline promotion alignment."
+    ],
+    "deliverables": [
+      "Visibility strategy document.",
+      "Content calendar starter set.",
+      "Campaign message sheet.",
+      "Local brand activation idea set.",
+      "Inquiry-handling framework."
+    ]
+  },
+  {
+    "id": "pkg_3",
+    "name": "Branding and Positioning Package",
+    "targetAudience": "Consultants, professionals, premium local brands",
+    "description": "A strategic brand package to help businesses present themselves with more clarity, trust, and competitive distinctiveness.",
+    "price": "55000",
+    "scope": [
+      "Brand messaging refinement.",
+      "Value proposition clarity.",
+      "Offer restructuring.",
+      "Customer-facing language improvement.",
+      "Trust-building communication review."
+    ],
+    "deliverables": [
+      "Brand summary sheet.",
+      "Positioning note.",
+      "Offer wording recommendations.",
+      "Customer communication copy set.",
+      "Basic identity improvement notes."
+    ]
+  },
+  {
+    "id": "pkg_4",
+    "name": "Sales and Lead Conversion Package",
+    "targetAudience": "Businesses receiving inquiries but converting weakly",
+    "description": "A conversion-focused package to improve how leads are handled, nurtured, and closed.",
+    "price": "45000",
+    "scope": [
+      "Inquiry handling review.",
+      "Sales script improvement.",
+      "Follow-up sequence planning.",
+      "Offer presentation improvement.",
+      "Conversion friction audit."
+    ],
+    "deliverables": [
+      "Sales process review sheet.",
+      "Lead response templates.",
+      "Follow-up sequence outline.",
+      "Proposal improvement recommendations.",
+      "Conversion checklist."
+    ]
+  },
+  {
+    "id": "pkg_5",
+    "name": "End-to-End Business Support Package",
+    "targetAudience": "Entrepreneurs wanting ongoing marketing and business support",
+    "description": "An integrated advisory and execution support package for entrepreneurs who want one partner for both marketing and growth direction.",
+    "price": "90000",
+    "scope": [
+      "Business review.",
+      "Marketing strategy.",
+      "Offer and communication improvement.",
+      "Process consultation.",
+      "Ongoing monthly guidance."
+    ],
+    "deliverables": [
+      "Diagnosis report.",
+      "Strategic roadmap.",
+      "Business improvement recommendations.",
+      "Support review meetings.",
+      "Monthly renewal option."
+    ]
+  }
+]
