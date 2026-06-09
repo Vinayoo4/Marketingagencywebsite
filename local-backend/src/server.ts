@@ -80,6 +80,33 @@ app.get('/api/testimonials', async (_req, res) => {
   res.json(db.testimonials);
 });
 
+app.get('/api/service-packages', async (_req, res) => {
+  try {
+    const data = await readJsonFile<unknown[]>('servicePackages.json');
+    res.json(data);
+  } catch {
+    res.status(404).json({ error: 'Service packages not found' });
+  }
+});
+
+app.get('/api/package-addons', async (_req, res) => {
+  try {
+    const data = await readJsonFile<unknown[]>('packageAddOns.json');
+    res.json(data);
+  } catch {
+    res.status(404).json({ error: 'Package addons not found' });
+  }
+});
+
+app.get('/api/faqs', async (_req, res) => {
+  try {
+    const data = await readJsonFile<unknown[]>('faqs.json');
+    res.json(data);
+  } catch {
+    res.status(404).json({ error: 'FAQs not found' });
+  }
+});
+
 app.post('/api/inquiries', async (req, res) => {
   const payload = req.body as Partial<Inquiry>;
   const requiredFields = ['name', 'email', 'phone', 'business_name', 'business_stage', 'message'];
@@ -110,7 +137,7 @@ app.post('/api/inquiries', async (req, res) => {
       : [],
     message: String(payload.message),
     status: 'new',
-    admin_notes: '',
+    admin_notes: payload.source ? `Source: ${String(payload.source)}` : '',
     created_at: now,
     updated_at: now,
   };

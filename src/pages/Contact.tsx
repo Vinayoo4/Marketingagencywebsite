@@ -18,9 +18,15 @@ const Contact = () => {
   const [services, setServices] = useState<Service[]>([]);
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [source, setSource] = useState<string>('General Contact Page');
 
   useEffect(() => {
     void api.getServices().then(setServices).catch(() => undefined);
+    const params = new URLSearchParams(window.location.search);
+    const srcParam = params.get('source');
+    if (srcParam) {
+      setSource(srcParam);
+    }
   }, []);
 
   const serviceOptions = useMemo(() => services.map((s) => s.name), [services]);
@@ -52,7 +58,7 @@ const Contact = () => {
     if (!validate()) return;
     setStatus('loading');
     try {
-      await api.createInquiry(form);
+      await api.createInquiry({ ...form, source });
       setStatus('success');
       setForm(initialForm);
       setErrors({});

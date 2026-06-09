@@ -91,6 +91,7 @@ export interface InquiryPayload {
   business_stage: 'idea' | 'early' | 'growing' | 'established';
   services_interested: string[];
   message: string;
+  source?: string;
 }
 
 export interface AdminLoginResponse {
@@ -101,11 +102,38 @@ export interface AdminLoginResponse {
   };
 }
 
+export interface ServicePackage {
+  id: string;
+  name: string;
+  targetAudience: string;
+  description: string;
+  price: string;
+  scope: string[];
+  deliverables: string[];
+}
+
+export interface PackageAddon {
+  id: string;
+  name: string;
+  description: string;
+  price: string;
+  unit: string;
+}
+
+export interface Faq {
+  id: string;
+  question: string;
+  answer: string;
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type JsonValue = any;
 
 export const api = {
   health: () => request<{ status: string }>('GET', '/health'),
+  getServicePackages: () => request<ServicePackage[]>('GET', '/api/service-packages'),
+  getPackageAddons: () => request<PackageAddon[]>('GET', '/api/package-addons'),
+  getFaqs: () => request<Faq[]>('GET', '/api/faqs'),
   getServices: () => request<Service[]>('GET', '/api/services'),
   getTestimonials: () => request<Testimonial[]>('GET', '/api/testimonials'),
   createInquiry: (payload: InquiryPayload) => request<{ success: boolean; inquiry: Inquiry }>('POST', '/api/inquiries', payload),
